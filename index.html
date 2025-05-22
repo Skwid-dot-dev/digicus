@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital Abacus</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Georgia', serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            overflow-x: auto;
+        }
+
+        /* Animated background elements */
+        .cloud {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 50px;
+            opacity: 0.6;
+            animation: float 20s infinite linear;
+        }
+
+        .cloud:before {
+            content: '';
+            position: absolute;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 50px;
+        }
+
+        .cloud1 {
+            width: 80px;
+            height: 30px;
+            top: 15%;
+            left: -100px;
+            animation-duration: 25s;
+        }
+
+        .cloud1:before {
+            width: 40px;
+            height: 40px;
+            top: -20px;
+            left: 10px;
+        }
+
+        .cloud2 {
+            width: 60px;
+            height: 25px;
+            top: 35%;
+            left: -80px;
+            animation-duration: 30s;
+        }
+
+        .cloud2:before {
+            width: 35px;
+            height: 35px;
+            top: -15px;
+            left: 15px;
+        }
+
+        .cloud3 {
+            width: 70px;
+            height: 28px;
+            top: 60%;
+            left: -90px;
+            animation-duration: 35s;
+        }
+
+        .cloud3:before {
+            width: 38px;
+            height: 38px;
+            top: -18px;
+            left: 12px;
+        }
+
+        .cloud4 {
+            width: 55px;
+            height: 22px;
+            top: 80%;
+            left: -75px;
+            animation-duration: 28s;
+        }
+
+        .cloud4:before {
+            width: 32px;
+            height: 32px;
+            top: -14px;
+            left: 8px;
+        }
+
+        .cloud5 {
+            width: 90px;
+            height: 35px;
+            top: 5%;
+            left: -110px;
+            animation-duration: 40s;
+        }
+
+        .cloud5:before {
+            width: 45px;
+            height: 45px;
+            top: -22px;
+            left: 15px;
+        }
+
+        .cloud6 {
+            width: 65px;
+            height: 26px;
+            top: 50%;
+            left: -85px;
+            animation-duration: 32s;
+        }
+
+        .cloud6:before {
+            width: 36px;
+            height: 36px;
+            top: -16px;
+            left: 12px;
+        }
+
+        @keyframes float {
+            0% { transform: translateX(-100px); }
+            100% { transform: translateX(calc(100vw + 100px)); }
+        }
+
+        .container {
+            background: rgba(139, 69, 19, 0.4);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(15px);
+            border: 3px solid rgba(139, 69, 19, 0.6);
+            position: relative;
+            max-width: 95vw;
+        }
+
+        .title {
+            text-align: center;
+            color: #F4E4BC;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+            font-weight: bold;
+        }
+
+        .abacus {
+            background: rgba(139, 69, 19, 0.6);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: inset 0 4px 8px rgba(0, 0, 0, 0.4);
+            border: 2px solid rgba(101, 67, 33, 0.8);
+            backdrop-filter: blur(10px);
+        }
+
+        .rod-container {
+            margin: 20px 0;
+            position: relative;
+        }
+
+        .rod {
+            width: 600px;
+            max-width: 80vw;
+            height: 8px;
+            background: linear-gradient(to right, #C0C0C0, #A9A9A9);
+            border-radius: 4px;
+            position: relative;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            margin: 0 auto;
+        }
+
+        .label {
+            position: absolute;
+            left: -80px;
+            top: -8px;
+            color: #F4E4BC;
+            font-weight: bold;
+            font-size: 1.1em;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
+        }
+
+        .value-markers {
+            position: absolute;
+            top: 25px;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            padding: 0 15px;
+        }
+
+        .marker {
+            color: #F4E4BC;
+            font-size: 0.9em;
+            font-weight: bold;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
+        }
+
+        .bead {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            position: absolute;
+            top: -11px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            z-index: 10;
+        }
+
+        .bead:hover {
+            transform: scale(1.15);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+        }
+
+        .bead:active {
+            transform: scale(0.95);
+        }
+
+        /* Different colors for different place values */
+        .ones .bead { background: linear-gradient(145deg, #FF6B6B, #FF5252); }
+        .tens .bead { background: linear-gradient(145deg, #4ECDC4, #26A69A); }
+        .hundreds .bead { background: linear-gradient(145deg, #45B7D1, #2196F3); }
+        .thousands .bead { background: linear-gradient(145deg, #96CEB4, #4CAF50); }
+        .ten-thousands .bead { background: linear-gradient(145deg, #FFEAA7, #FFC107); }
+        .hundred-thousands .bead { background: linear-gradient(145deg, #DDA0DD, #9C27B0); }
+
+        .display {
+            text-align: center;
+            margin: 25px 0;
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 10px;
+            padding: 15px;
+            border: 2px solid rgba(101, 67, 33, 0.8);
+            backdrop-filter: blur(5px);
+        }
+
+        .current-value {
+            font-size: 2.5em;
+            color: #00FF00;
+            font-family: 'Courier New', monospace;
+            text-shadow: 0 0 10px #00FF00;
+            margin-bottom: 10px;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            background: linear-gradient(145deg, #FF6B6B, #FF5252);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .instructions {
+            margin-top: 20px;
+            color: #F4E4BC;
+            text-align: center;
+            font-style: italic;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .title { font-size: 2em; }
+            .current-value { font-size: 2em; }
+            .label { left: -60px; font-size: 1em; }
+            .bead { width: 25px; height: 25px; top: -8px; }
+            .rod { width: 90vw; }
+            .marker { font-size: 0.8em; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Animated clouds -->
+    <div class="cloud cloud1"></div>
+    <div class="cloud cloud2"></div>
+    <div class="cloud cloud3"></div>
+    <div class="cloud cloud4"></div>
+    <div class="cloud cloud5"></div>
+    <div class="cloud cloud6"></div>
+
+    <div class="container">
+        <h1 class="title">🧮 Digital Abacus 🧮</h1>
+        
+        <div class="abacus" id="abacus">
+            <!-- Rods will be generated by JavaScript -->
+        </div>
+
+        <div class="display">
+            <div class="current-value" id="display">0</div>
+            <div class="controls">
+                <button class="btn" onclick="resetAbacus()">Reset</button>
+                <button class="btn" onclick="randomValue()">Random</button>
+            </div>
+        </div>
+
+        <div class="instructions">
+            Drag each bead to positions 0-9 to set values! Click to cycle through positions.
+        </div>
+    </div>
+
+    <script>
+        const placeValues = [
+            { name: '100,000s', value: 100000, class: 'hundred-thousands' },
+            { name: '10,000s', value: 10000, class: 'ten-thousands' },
+            { name: '1,000s', value: 1000, class: 'thousands' },
+            { name: '100s', value: 100, class: 'hundreds' },
+            { name: '10s', value: 10, class: 'tens' },
+            { name: '1s', value: 1, class: 'ones' }
+        ];
+
+        let beadValues = {};
+        let isDragging = false;
+        let currentBead = null;
+
+        // Initialize bead values
+        placeValues.forEach(place => {
+            beadValues[place.value] = 0;
+        });
+
+        // Generate the abacus HTML
+        function generateAbacus() {
+            const abacusContainer = document.getElementById('abacus');
+            
+            placeValues.forEach(place => {
+                const rodContainer = document.createElement('div');
+                rodContainer.className = `rod-container ${place.class}`;
+                
+                const label = document.createElement('div');
+                label.className = 'label';
+                label.textContent = place.name;
+                
+                const rod = document.createElement('div');
+                rod.className = 'rod';
+                rod.dataset.place = place.value;
+                
+                // Create value markers (0-9)
+                const markers = document.createElement('div');
+                markers.className = 'value-markers';
+                for (let i = 0; i <= 9; i++) {
+                    const marker = document.createElement('div');
+                    marker.className = 'marker';
+                    marker.textContent = i;
+                    markers.appendChild(marker);
+                }
+                
+                // Create one bead for this rod
+                const bead = document.createElement('div');
+                bead.className = 'bead';
+                bead.dataset.value = place.value;
+                
+                // Position bead at position 0 (leftmost)
+                positionBead(bead, 0);
+                
+                // Add event listeners
+                bead.addEventListener('mousedown', startDrag);
+                bead.addEventListener('touchstart', startDrag);
+                bead.addEventListener('click', cycleBead);
+                
+                rod.appendChild(bead);
+                rodContainer.appendChild(label);
+                rodContainer.appendChild(rod);
+                rodContainer.appendChild(markers);
+                abacusContainer.appendChild(rodContainer);
+            });
+        }
+
+        function positionBead(bead, value) {
+            const rod = bead.parentElement;
+            const rodWidth = rod.offsetWidth;
+            const position = (value / 9) * (rodWidth - 45) + 15; // 45 is bead width, 15 is margin
+            bead.style.left = position + 'px';
+            
+            const placeValue = parseInt(bead.dataset.value);
+            beadValues[placeValue] = value;
+        }
+
+        function getBeadValue(bead) {
+            const rod = bead.parentElement;
+            const rodWidth = rod.offsetWidth;
+            const beadLeft = parseInt(bead.style.left);
+            const normalizedPosition = (beadLeft - 15) / (rodWidth - 45);
+            return Math.round(normalizedPosition * 9);
+        }
+
+        function cycleBead(e) {
+            if (isDragging) return;
+            
+            const bead = e.target;
+            const placeValue = parseInt(bead.dataset.value);
+            const currentValue = beadValues[placeValue];
+            const newValue = (currentValue + 1) % 10;
+            
+            positionBead(bead, newValue);
+            updateDisplay();
+        }
+
+        function startDrag(e) {
+            e.preventDefault();
+            isDragging = true;
+            currentBead = e.target;
+            
+            document.addEventListener('mousemove', drag);
+            document.addEventListener('mouseup', stopDrag);
+            document.addEventListener('touchmove', drag);
+            document.addEventListener('touchend', stopDrag);
+        }
+
+        function drag(e) {
+            if (!isDragging || !currentBead) return;
+            
+            e.preventDefault();
+            const rod = currentBead.parentElement;
+            const rodRect = rod.getBoundingClientRect();
+            
+            let clientX;
+            if (e.type === 'touchmove') {
+                clientX = e.touches[0].clientX;
+            } else {
+                clientX = e.clientX;
+            }
+            
+            let newLeft = clientX - rodRect.left - 15; // 15 is half bead width
+            newLeft = Math.max(15, Math.min(newLeft, rodRect.width - 30));
+            
+            currentBead.style.left = newLeft + 'px';
+        }
+
+        function stopDrag(e) {
+            if (!isDragging || !currentBead) return;
+            
+            // Snap to nearest position (0-9)
+            const value = getBeadValue(currentBead);
+            positionBead(currentBead, value);
+            updateDisplay();
+            
+            isDragging = false;
+            currentBead = null;
+            document.removeEventListener('mousemove', drag);
+            document.removeEventListener('mouseup', stopDrag);
+            document.removeEventListener('touchmove', drag);
+            document.removeEventListener('touchend', stopDrag);
+        }
+
+        function updateDisplay() {
+            let total = 0;
+            for (let placeValue in beadValues) {
+                total += parseInt(placeValue) * beadValues[placeValue];
+            }
+            document.getElementById('display').textContent = total.toLocaleString();
+        }
+
+        function resetAbacus() {
+            placeValues.forEach(place => {
+                const bead = document.querySelector(`[data-value="${place.value}"]`);
+                positionBead(bead, 0);
+            });
+            updateDisplay();
+        }
+
+        function randomValue() {
+            const randomNum = Math.floor(Math.random() * 999999) + 1;
+            
+            placeValues.forEach(place => {
+                const digitValue = Math.floor((randomNum / place.value) % 10);
+                const bead = document.querySelector(`[data-value="${place.value}"]`);
+                positionBead(bead, digitValue);
+            });
+            
+            updateDisplay();
+        }
+
+        // Initialize the abacus
+        generateAbacus();
+        updateDisplay();
+    </script>
+</body>
+</html>
